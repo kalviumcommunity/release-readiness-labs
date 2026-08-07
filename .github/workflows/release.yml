@@ -17,7 +17,7 @@ jobs:
           echo "Running validation tests..."
           npm install --prefix app
           npm test --prefix app
-          echo "Validation completed successfully
+          echo "Validation  successfully completed.
 
   deploy-production:
     needs: validate-release
