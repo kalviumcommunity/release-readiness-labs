@@ -5,7 +5,7 @@ on:
     branches:
       - main
       - investigation/release-readiness 
-      
+
 jobs:
   validate-release:
     runs-on: ubuntu-latest
@@ -31,3 +31,5 @@ jobs:
         run: |
           chmod +x scripts/deploy.sh
           ./scripts/deploy.sh
+
+          
