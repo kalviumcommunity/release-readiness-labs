@@ -1,6 +1,6 @@
 # OrderFlow
 
-This repository contains the Release Readiness Investigation & Deployment Approval Lab.
+This repository contains the Release Readiness Investigation and Deployment Approval Lab.
 
 ## Application
 
@@ -57,3 +57,28 @@ Make your changes and push them back to the repository.
 ├── docker-compose.yml
 └── README.md
 ```
+
+## Production Release
+
+Version: v2.3.0
+
+Deployment Strategy
+
+- Validate
+- Approval
+- Production Deployment
+
+Rollback Strategy
+
+Rollback to v2.2.0
+
+Infrastructure
+
+Kubernetes
+
+Approval Checklist
+
+- Validation Passed
+- Secrets Configured
+- Approval Granted
+- Rollback Verified
