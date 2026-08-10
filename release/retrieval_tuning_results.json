@@ -1,0 +1,113 @@
+[
+  {
+    "setting_name": "chunk_size_60_k_1",
+    "chunk_size": 60,
+    "top_k": 1,
+    "top_1_hit_rate": 0.333,
+    "top_k_hit_rate": 0.333,
+    "query_results": [
+      {
+        "query_id": "q1",
+        "top_1_hit": 0,
+        "top_k_hit": 0,
+        "retrieved_sources": [
+          "README.md"
+        ]
+      },
+      {
+        "query_id": "q2",
+        "top_1_hit": 0,
+        "top_k_hit": 0,
+        "retrieved_sources": [
+          "README.md"
+        ]
+      },
+      {
+        "query_id": "q3",
+        "top_1_hit": 1,
+        "top_k_hit": 1,
+        "retrieved_sources": [
+          "app/server.js"
+        ]
+      }
+    ]
+  },
+  {
+    "setting_name": "chunk_size_60_k_3",
+    "chunk_size": 60,
+    "top_k": 3,
+    "top_1_hit_rate": 0.333,
+    "top_k_hit_rate": 1.0,
+    "query_results": [
+      {
+        "query_id": "q1",
+        "top_1_hit": 0,
+        "top_k_hit": 1,
+        "retrieved_sources": [
+          "README.md",
+          "deployment/kubernetes/deployment.yaml",
+          "release/release-summary.yml"
+        ]
+      },
+      {
+        "query_id": "q2",
+        "top_1_hit": 0,
+        "top_k_hit": 1,
+        "retrieved_sources": [
+          "README.md",
+          "deployment/kubernetes/deployment.yaml",
+          "release/deployment-config.yml"
+        ]
+      },
+      {
+        "query_id": "q3",
+        "top_1_hit": 1,
+        "top_k_hit": 1,
+        "retrieved_sources": [
+          "README.md",
+          "app/server.js",
+          "deployment/kubernetes/deployment.yaml"
+        ]
+      }
+    ]
+  },
+  {
+    "setting_name": "chunk_size_120_k_3",
+    "chunk_size": 120,
+    "top_k": 3,
+    "top_1_hit_rate": 0.333,
+    "top_k_hit_rate": 1.0,
+    "query_results": [
+      {
+        "query_id": "q1",
+        "top_1_hit": 0,
+        "top_k_hit": 1,
+        "retrieved_sources": [
+          "README.md",
+          "deployment/kubernetes/deployment.yaml",
+          "release/release-summary.yml"
+        ]
+      },
+      {
+        "query_id": "q2",
+        "top_1_hit": 0,
+        "top_k_hit": 1,
+        "retrieved_sources": [
+          "README.md",
+          "deployment/kubernetes/deployment.yaml",
+          "release/deployment-config.yml"
+        ]
+      },
+      {
+        "query_id": "q3",
+        "top_1_hit": 1,
+        "top_k_hit": 1,
+        "retrieved_sources": [
+          "README.md",
+          "app/server.js",
+          "deployment/kubernetes/deployment.yaml"
+        ]
+      }
+    ]
+  }
+]

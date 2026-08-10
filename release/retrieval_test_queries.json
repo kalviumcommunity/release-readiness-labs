@@ -1,0 +1,26 @@
+[
+  {
+    "id": "q1",
+    "query": "production deployment approval",
+    "expected_sources": [
+      "release/approvals.yml",
+      "release/release-summary.yml"
+    ]
+  },
+  {
+    "id": "q2",
+    "query": "kubernetes deployment image tag",
+    "expected_sources": [
+      "deployment/kubernetes/deployment.yaml",
+      "release/deployment-config.yml"
+    ]
+  },
+  {
+    "id": "q3",
+    "query": "health endpoint api status",
+    "expected_sources": [
+      "app/server.js",
+      "README.md"
+    ]
+  }
+]
