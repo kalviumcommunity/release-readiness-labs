@@ -1,2 +1,2 @@
-rollback_strategy: 
+rollback_strategy: rollback to the previous working version
 target_version: 

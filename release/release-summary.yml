@@ -1,5 +1,5 @@
-status: unknown
+status: Deployment
 environment: production
 version: latest
 approval: pending
-rollback: none
+rollback: Last working version
