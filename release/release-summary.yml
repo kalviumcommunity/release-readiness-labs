@@ -1,5 +1,6 @@
-status: unknown
+status: ready
 environment: production
-version: latest
-approval: pending
-rollback: none
+version: v2.3.0
+approval: approved
+rollback: configured
+infrastructure: kubernetes
