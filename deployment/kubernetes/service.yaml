@@ -1,4 +1,4 @@
-apiVersion: v1
+apiVersion: v2.3.0
 kind: Service
 metadata:
   name: lab-app-service

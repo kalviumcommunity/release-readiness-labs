@@ -1,4 +1,4 @@
-apiVersion: apps/v1
+apiVersion: v2.3.0
 kind: Deployment
 metadata:
   name: lab-app
@@ -19,6 +19,6 @@ spec:
         - containerPort: 3000
         env:
         - name: API_KEY
-          value: "test-api-key-1234"
+          value: {{secrets.API_KEY}}
         - name: DATABASE_PASSWORD
-          value: "password123"
+          value: {{secrets.DATABASE_PASSWORD}}
