@@ -1,6 +1,8 @@
 const express = require('express');
 const app = express();
-const port = process.env.PORT || 3000;
+const dotenv = require('dotenv');
+dotenv.config();
+const port = process.env.PORT;
 
 app.get('/', (req, res) => {
   res.send('Welcome to the Release Readiness Lab API');
