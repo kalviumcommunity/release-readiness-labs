@@ -1,4 +1,6 @@
 const express = require('express');
+const { version } = require('./package.json');
+
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -7,9 +9,13 @@ app.get('/', (req, res) => {
 });
 
 app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'ok', version: process.env.npm_package_version });
+  res.status(200).json({ status: 'ok', version });
 });
 
-app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
-});
+if (require.main === module) {
+  app.listen(port, () => {
+    console.log(`Server listening on port ${port}`);
+  });
+}
+
+module.exports = app;

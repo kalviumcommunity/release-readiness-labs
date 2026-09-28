@@ -1,5 +1,5 @@
-status: unknown
+status: successful
 environment: production
-version: latest
-approval: pending
-rollback: none
+version: "1.0.0"
+approval: approved
+rollback: ready
