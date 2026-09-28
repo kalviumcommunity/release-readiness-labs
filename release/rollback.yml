@@ -1,2 +1,2 @@
-rollback_strategy: 
-target_version: 
+rollback_strategy: deployment rollout undo
+target_version: previous-stable

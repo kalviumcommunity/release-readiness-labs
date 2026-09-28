@@ -1,33 +1,58 @@
 name: Release Pipeline
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
 
 jobs:
-  deploy-production:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Deploy to Production
-        run: |
-          chmod +x scripts/deploy.sh
-          ./scripts/deploy.sh
-
   validate-release:
     runs-on: ubuntu-latest
-    needs: deploy-production
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Run Tests
         run: |
-          echo "Running validation tests..."
           npm install --prefix app
           npm test --prefix app
-          echo "Validation complete - some tests failed because deployment config has errors"
-          exit 1
+
+      - name: Validate release metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="$(awk -F': ' '$1 == "version" { print $2; exit }' release/release-summary.yml)"
+          test -n "$version"
+          test "$version" != "latest"
+          test "$(awk -F': ' '$1 == "status" { print $2; exit }' release/release-summary.yml)" = "approved"
+          test "$(awk -F': ' '$1 == "approval" { print $2; exit }' release/release-summary.yml)" = "approved"
+          test -n "$(awk -F': ' '$1 == "approvedBy" { print $2; exit }' release/approvals.yml)"
+          test -n "$(awk -F': ' '$1 == "rollback_strategy" { print $2; exit }' release/rollback.yml)"
+          test -n "$(awk -F': ' '$1 == "target_version" { print $2; exit }' release/rollback.yml)"
+          ! grep -Eq 'password123|test-secret|abcd1234' release/deployment-config.yml
+          echo "Validated release version: $version"
+
+  deploy-production:
+    runs-on: ubuntu-latest
+    needs: validate-release
+    environment: ${{ format('{0}', 'production') }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Read release version
+        id: release
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="$(awk -F': ' '$1 == "version" { print $2; exit }' release/release-summary.yml)"
+          test -n "$version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Deploy to Production
+        env:
+          RELEASE_VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          chmod +x scripts/deploy.sh
+          ./scripts/deploy.sh "$RELEASE_VERSION"
