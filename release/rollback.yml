@@ -1,2 +1,5 @@
-rollback_strategy: 
-target_version: 
+rollback_strategy: "kubernetes-rollout-undo"
+target_version: "v2.2.0"
+automated_trigger: true
+max_retry_attempts: 2
+health_check_endpoint: "/health"

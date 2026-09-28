@@ -1,3 +1,5 @@
-approvedBy: 
-reviewDate: 
-releaseManager: 
+approvedBy: "QA & Release Engineering"
+reviewDate: "2026-09-28"
+releaseManager: "Lead DevOps Engineer"
+status: "approved"
+approvalId: "APR-2026-230"
