@@ -1,2 +1,3 @@
-rollback_strategy: 
-target_version: 
+rollback_strategy: "automated"
+target_version: "previous"
+
