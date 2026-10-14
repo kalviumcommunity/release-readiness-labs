@@ -1,4 +1,4 @@
 variable "aws_secret_key" {
-  type    = string
-  default = "test-secret"
+  type      = string
+  sensitive = true
 }
