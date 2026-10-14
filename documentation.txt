@@ -1,0 +1,4 @@
+The problems are that the file contains broken github actions deployment workflow 
+it has missing deployment approvals , and missing documentation about how
+everything works. It has missing rollback strategy and incorrect deployement
+infrastrucure and insecure secret handling 
