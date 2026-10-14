@@ -1,2 +1,2 @@
-rollback_strategy: 
-target_version: 
+rollback_strategy: Deploy previous stable version via GitHub Actions
+target_version: 0.9.0
