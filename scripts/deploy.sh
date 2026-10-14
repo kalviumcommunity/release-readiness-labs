@@ -1,4 +1,3 @@
 #!/bin/bash
-echo "Starting deployment..."
-echo "Deploying version: latest"
+echo "Deploying version: v2.3.0"
 echo "Deployment successful."

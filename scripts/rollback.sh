@@ -1,3 +1,3 @@
 #!/bin/bash
-echo "Rolling back deployment..."
+echo "Rolling back to previous version"
 # Rollback logic here
