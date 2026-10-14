@@ -19,6 +19,12 @@ spec:
         - containerPort: 3000
         env:
         - name: API_KEY
-          value: "test-api-key-1234"
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: API_KEY
         - name: DATABASE_PASSWORD
-          value: "password123"
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: DATABASE_PASSWORD
