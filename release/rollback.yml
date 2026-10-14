@@ -1,2 +1,9 @@
-rollback_strategy: 
-target_version: 
+rollback_strategy: rolling-back-to-previous-stable
+target_version: v2.2.0
+steps:
+  - verify-production-health
+  - redeploy-previous-image
+  - validate-health-endpoint
+  - notify-release-manager
+auto_rollback_on_health_failure: true
+

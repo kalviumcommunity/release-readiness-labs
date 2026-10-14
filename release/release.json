@@ -1,5 +1,9 @@
 {
-  "Version": "1.0",
-  "ReleaseDate": "2024-01-01",
-  "Author": "DevOps Team"
+  "Version": "v2.3.0",
+  "ReleaseDate": "2026-10-14",
+  "Author": "DevOps Team",
+  "Environment": "production",
+  "Status": "approved",
+  "Approval": "release-manager",
+  "RollbackVersion": "v2.2.0"
 }

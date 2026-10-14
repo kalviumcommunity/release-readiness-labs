@@ -1,7 +1,16 @@
 environment: production
-image_tag: production-build
+version: v2.3.0
+image_tag: v2.3.0
+image: lab-app:v2.3.0
+strategy: rolling
+replicas: 3
+health_check: /health
 secrets:
   API_KEY: ${API_KEY}
-  DATABASE_PASSWORD: password123
-  TOKEN: abcd1234
-  AWS_SECRET: test-secret
+  DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+approval:
+  required: true
+  environment: production
+rollback:
+  enabled: true
+  target_version: v2.2.0

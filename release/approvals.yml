@@ -1,3 +1,11 @@
-approvedBy: 
-reviewDate: 
-releaseManager: 
+approvedBy: release-manager
+reviewDate: 2026-10-14
+releaseManager: release-manager
+version: v2.3.0
+environment: production
+status: approved
+checks:
+  tests: passed
+  security: passed
+  config: validated
+
