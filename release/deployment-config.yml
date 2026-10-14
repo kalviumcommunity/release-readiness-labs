@@ -2,6 +2,6 @@ environment: production
 image_tag: production-build
 secrets:
   API_KEY: ${API_KEY}
-  DATABASE_PASSWORD: password123
-  TOKEN: abcd1234
-  AWS_SECRET: test-secret
+  DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+  TOKEN: ${TOKEN}
+  AWS_SECRET: ${AWS_SECRET}
