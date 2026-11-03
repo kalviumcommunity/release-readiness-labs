@@ -1,0 +1,9 @@
+# Template only. Do not pre-fill or fabricate approval evidence.
+releaseVersion: "2.3.0"
+environment: production
+approvalMechanism: GitHub Environment protection rules
+requiredApprovers:
+  - Configure authorized production reviewers in GitHub repository Settings > Environments > production
+approvedBy: null
+approvedAt: null
+approvalStatus: pending

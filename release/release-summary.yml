@@ -1,0 +1,13 @@
+application: OrderFlow
+version: "2.3.0"
+gitCommit: "recorded by GitHub Actions as github.sha"
+artifactIdentity: "orderflow:2.3.0-<full-git-sha>"
+environment: production
+deploymentTarget: Kubernetes
+pipeline:
+  validationRequired: true
+  buildRequiresValidation: true
+  productionRequiresManualOptIn: true
+  productionEnvironmentApprovalRequired: true
+status: readiness-changes-prepared
+productionDeploymentPerformed: false

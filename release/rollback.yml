@@ -1,0 +1,13 @@
+application: OrderFlow
+releaseVersion: "2.3.0"
+rollbackStrategy: Kubernetes rolling rollback to the previous healthy ReplicaSet
+command: "kubectl -n orderflow rollout undo deployment/orderflow"
+verification:
+  - "kubectl -n orderflow rollout status deployment/orderflow --timeout=180s"
+  - "GET /health returns HTTP 200 and the expected version"
+triggerConditions:
+  - failed readiness or liveness checks
+  - elevated 5xx rate or sustained latency regression
+  - failed post-deployment smoke tests
+decisionOwner: authorized production incident commander
+dataRollback: "Application rollback does not reverse database changes; use backward-compatible migrations and a separately reviewed database recovery plan."

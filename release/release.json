@@ -1,0 +1,9 @@
+{
+  "application": "OrderFlow",
+  "version": "2.3.0",
+  "releaseDate": "2026-11-03",
+  "artifactTagFormat": "2.3.0-<full-git-sha>",
+  "sourceOfTruth": "app/package.json",
+  "deploymentTarget": "Kubernetes",
+  "productionDeploymentPerformed": false
+}

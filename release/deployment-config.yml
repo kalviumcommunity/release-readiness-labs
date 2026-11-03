@@ -1,0 +1,21 @@
+release:
+  application: OrderFlow
+  version: "2.3.0"
+  image_tag_format: "2.3.0-<full-git-sha>"
+  immutable_image_required: true
+environment:
+  name: production
+  target: kubernetes
+  namespace: orderflow
+  manifest_path: deployment/kubernetes/
+secrets:
+  source: GitHub Actions production Environment secrets and Kubernetes Secret
+  required:
+    - KUBE_CONFIG_B64
+    - API_KEY
+    - DATABASE_PASSWORD
+  committed_secret_values: none
+deployment:
+  automatic_on_push: false
+  requires_validation: true
+  requires_protected_environment_approval: true
