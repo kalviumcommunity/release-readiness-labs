@@ -1,24 +1,52 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: lab-app
+  name: orderflow
+  labels:
+    app: orderflow
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: lab-app
+      app: orderflow
   template:
     metadata:
       labels:
-        app: lab-app
+        app: orderflow
     spec:
       containers:
-      - name: lab-app
-        image: lab-app:production-build
-        ports:
-        - containerPort: 3000
-        env:
-        - name: API_KEY
-          value: "test-api-key-1234"
-        - name: DATABASE_PASSWORD
-          value: "password123"
+        - name: orderflow
+          image: ghcr.io/tanvi-agarwal10/release-readiness-labsss/orderflow:v2.3.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 3000
+          env:
+            - name: RELEASE_VERSION
+              value: "2.3.0"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 10001
+            capabilities:
+              drop: [ALL]

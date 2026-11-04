@@ -1,3 +1,18 @@
-approvedBy: 
-reviewDate: 
-releaseManager: 
+release_version: v2.3.0
+production_environment: production
+approval_status: pending
+required_reviewers:
+  - configure in GitHub repository Settings > Environments > production
+checklist:
+  - item: Release tag v2.3.0 points to the reviewed commit
+    status: pending
+  - item: Tests and configuration validation pass in GitHub Actions
+    status: pending
+  - item: Production namespace and cluster credentials are configured
+    status: pending
+  - item: Rollback target and on-call owner are confirmed
+    status: pending
+  - item: Independent production reviewer approves the deployment
+    status: pending
+approved_by: null
+approved_at: null

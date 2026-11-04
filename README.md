@@ -1,59 +1,36 @@
 # OrderFlow
 
-This repository contains the Release Readiness Investigation & Deployment Approval Lab.
+This repository contains the OrderFlow release readiness lab for release `v2.3.0`.
 
 ## Application
 
-A simple Node.js Express application.
+A simple Node.js Express API with `GET /` and `GET /health`. The health endpoint returns the application release version.
 
-### Endpoints
-- `GET /`
-- `GET /health`
+## Run locally
 
-## Current Release
-v2.3.0
-Production Deployment
-
-## Getting Started
-
-### Clone
-```bash
-git clone https://github.com/kalvium-devops/release-readiness-lab.git
-cd release-readiness-lab
-```
-
-### Install
 ```bash
 cd app
-npm install
-```
-
-### Run
-```bash
+npm ci
 npm start
 ```
-Alternatively, use Docker Compose:
+
+Or use Docker Compose:
+
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
 
-### Push
-Make your changes and push them back to the repository.
+## Release readiness
 
-## Repository Structure
-```
-├── .github/
-│   └── workflows/
-│       └── release.yml
-├── app/
-│   ├── server.js
-│   └── package.json
-├── deployment/
-│   ├── kubernetes/
-│   └── terraform/
-├── release/
-├── scripts/
-├── Dockerfile
-├── docker-compose.yml
-└── README.md
-```
+The release workflow validates the version, runs application tests and YAML/configuration checks, and builds the container image. A manual dispatch from a branch defaults to validation-only: it builds the image with read-only permissions, skips publishing, and skips deployment. GitHub requires the workflow dispatch trigger to exist on the default branch before the Actions UI can start that run. A `v2.3.0` tag push follows the publish and protected GitHub `production` deployment path. Configure required reviewers, `KUBE_CONFIG`, and `PRODUCTION_NAMESPACE` in repository environment settings before a production release.
+
+See [release/RELEASE_READINESS.md](release/RELEASE_READINESS.md) for the deployment plan, infrastructure decision, rollback steps, production approval checklist, and validation status. No production deployment is performed by local validation.
+
+## Repository layout
+
+- `.github/workflows/release.yml` — release validation, image build, and protected deploy stages
+- `app/` — Express API and endpoint tests
+- `deployment/kubernetes/` — selected production deployment target
+- `deployment/terraform/` — unselected EC2 alternative
+- `release/` — release metadata, configuration, approval checklist, and rollback procedure
+- `scripts/` — deployment, rollback, and configuration validation helpers

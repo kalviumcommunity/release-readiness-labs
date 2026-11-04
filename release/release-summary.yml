@@ -1,5 +1,9 @@
-status: unknown
+status: prepared-pending-github-validation-and-approval
 environment: production
-version: latest
+version: v2.3.0
+image: ghcr.io/tanvi-agarwal10/release-readiness-labsss/orderflow:v2.3.0
 approval: pending
-rollback: none
+rollback: kubectl-rollout-undo
+local_validation: passed
+local_image_build: unavailable-docker-daemon
+validation: not-run-on-github

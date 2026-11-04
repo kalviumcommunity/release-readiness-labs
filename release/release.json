@@ -1,5 +1,7 @@
 {
-  "Version": "1.0",
-  "ReleaseDate": "2024-01-01",
-  "Author": "DevOps Team"
+  "version": "v2.3.0",
+  "applicationVersion": "2.3.0",
+  "releaseDate": null,
+  "status": "prepared-pending-github-validation-and-approval",
+  "image": "ghcr.io/tanvi-agarwal10/release-readiness-labsss/orderflow:v2.3.0"
 }

@@ -1,33 +1,176 @@
-name: Release Pipeline
+name: OrderFlow v2.3.0 release
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - v2.3.0
+  workflow_dispatch:
+    inputs:
+      deploy_to_production:
+        description: Publish the release image and enter the protected production gate (only when run from tag v2.3.0)
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: orderflow-production
+  cancel-in-progress: false
 
 jobs:
+  test-and-validate:
+    name: Test and validate release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Check out release
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+
+      - name: Verify release version
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          GIT_REF: ${{ github.ref }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          if [[ "$EVENT_NAME" == "push" ]]; then
+            test "$GIT_REF" = "refs/tags/v2.3.0"
+            test "$REF_NAME" = "v2.3.0"
+          else
+            test "$EVENT_NAME" = "workflow_dispatch"
+          fi
+          node -e 'if (require("./app/package.json").version !== "2.3.0") process.exit(1)'
+
+      - name: Install dependencies
+        run: npm ci --prefix app
+
+      - name: Run application tests
+        run: npm test --prefix app
+
+      - name: Validate YAML configuration
+        run: node scripts/validate_config.js
+
+  build-image:
+    name: Build release image
+    needs: test-and-validate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      image: ${{ steps.image.outputs.image }}
+    steps:
+      - name: Check out release
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set image name
+        id: image
+        env:
+          REPOSITORY: ${{ github.repository }}
+          EVENT_NAME: ${{ github.event_name }}
+          REF_NAME: ${{ github.ref_name }}
+          GIT_REF: ${{ github.ref }}
+          DEPLOY_TO_PRODUCTION: ${{ inputs.deploy_to_production }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          if [[ "$EVENT_NAME" == "push" || ( "$EVENT_NAME" == "workflow_dispatch" && "$DEPLOY_TO_PRODUCTION" == "true" && "$GIT_REF" == "refs/tags/v2.3.0" ) ]]; then
+            tag="$REF_NAME"
+          else
+            tag="validation-${COMMIT_SHA:0:12}"
+          fi
+          echo "image=ghcr.io/${REPOSITORY,,}/orderflow:$tag" >> "$GITHUB_OUTPUT"
+
+      - name: Build image without publishing
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          tags: ${{ steps.image.outputs.image }}
+          build-args: RELEASE_VERSION=v2.3.0
+
+  publish-image:
+    name: Publish release image
+    needs: [test-and-validate, build-image]
+    if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.deploy_to_production && github.ref == 'refs/tags/v2.3.0')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image: ${{ needs.build-image.outputs.image }}
+    steps:
+      - name: Check out release
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish release image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ needs.build-image.outputs.image }}
+          build-args: RELEASE_VERSION=v2.3.0
+
   deploy-production:
+    name: Deploy v2.3.0 to production
+    needs: [test-and-validate, build-image, publish-image]
+    if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.deploy_to_production && github.ref == 'refs/tags/v2.3.0')
     runs-on: ubuntu-latest
+    environment:
+      name: production
+    permissions:
+      contents: read
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Check out release
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
-      - name: Deploy to Production
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: ${{ vars.KUBECTL_VERSION }}
+
+      - name: Configure production cluster
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+          KUBECTL_VERSION: ${{ vars.KUBECTL_VERSION }}
         run: |
+          set -euo pipefail
+          test -n "$KUBE_CONFIG"
+          test -n "$KUBECTL_VERSION"
+          mkdir -p "$HOME/.kube"
+          printf '%s' "$KUBE_CONFIG" > "$HOME/.kube/config"
+          chmod 600 "$HOME/.kube/config"
+
+      - name: Deploy and verify rollout
+        env:
+          IMAGE: ${{ needs.publish-image.outputs.image }}
+          NAMESPACE: ${{ vars.PRODUCTION_NAMESPACE }}
+        run: |
+          set -euo pipefail
+          test -n "$NAMESPACE"
           chmod +x scripts/deploy.sh
-          ./scripts/deploy.sh
-
-  validate-release:
-    runs-on: ubuntu-latest
-    needs: deploy-production
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Run Tests
-        run: |
-          echo "Running validation tests..."
-          npm install --prefix app
-          npm test --prefix app
-          echo "Validation complete - some tests failed because deployment config has errors"
-          exit 1
+          ./scripts/deploy.sh "$IMAGE" "$NAMESPACE"
