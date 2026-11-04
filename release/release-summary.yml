@@ -1,5 +1,5 @@
-status: unknown
+status: pending_approval
 environment: production
-version: latest
+version: v2.3.0
 approval: pending
-rollback: none
+rollback: documented
