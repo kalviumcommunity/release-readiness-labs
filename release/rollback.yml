@@ -1,2 +1,13 @@
-rollback_strategy: 
-target_version: 
+rollback_strategy: blue-green-rollback
+target_version: v2.2.1
+
+steps:
+  1_identify: "Confirm the failing deployment version and check monitoring alerts."
+  2_trigger: "Run scripts/rollback.sh to revert to the previous stable image (v2.2.1)."
+  3_verify: "Confirm health endpoint returns HTTP 200 after rollback."
+  4_notify: "Notify the engineering team and stakeholders via Slack and email."
+  5_postmortem: "Create a post-mortem ticket within 24 hours."
+
+rollback_time_estimate: "< 10 minutes"
+last_stable_version: "v2.2.1"
+last_stable_image: "lab-app:v2.2.1"

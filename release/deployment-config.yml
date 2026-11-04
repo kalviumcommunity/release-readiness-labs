@@ -1,7 +1,11 @@
 environment: production
-image_tag: production-build
+image_tag: v2.3.0
+
 secrets:
-  API_KEY: ${API_KEY}
-  DATABASE_PASSWORD: password123
-  TOKEN: abcd1234
-  AWS_SECRET: test-secret
+  API_KEY: ${{ secrets.API_KEY }}
+  DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+  TOKEN: ${{ secrets.TOKEN }}
+  AWS_SECRET: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+deployment_approval_required: true
+approval_environment: production
