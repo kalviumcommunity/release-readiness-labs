@@ -1,2 +1,5 @@
-rollback_strategy: 
-target_version: 
+rollback_strategy: kubernetes-rollout-undo
+command: kubectl rollout undo deployment/orderflow --namespace "$PRODUCTION_NAMESPACE"
+verification: kubectl rollout status deployment/orderflow --namespace "$PRODUCTION_NAMESPACE" --timeout=5m
+target_version: previous-known-good-deployment-revision
+owner: production-release-operator

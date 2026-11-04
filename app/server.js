@@ -1,15 +1,20 @@
 const express = require('express');
 const app = express();
-const port = process.env.PORT || 3000;
+const releaseVersion = process.env.RELEASE_VERSION || process.env.npm_package_version || require('./package.json').version;
 
 app.get('/', (req, res) => {
-  res.send('Welcome to the Release Readiness Lab API');
+  res.send('Welcome to the OrderFlow API');
 });
 
 app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'ok', version: process.env.npm_package_version });
+  res.status(200).json({ status: 'ok', version: releaseVersion });
 });
 
-app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
-});
+if (require.main === module) {
+  const port = process.env.PORT || 3000;
+  app.listen(port, () => {
+    console.log(`OrderFlow ${releaseVersion} listening on port ${port}`);
+  });
+}
+
+module.exports = app;

@@ -1,7 +1,8 @@
+release_version: v2.3.0
+image: ghcr.io/tanvi-agarwal10/release-readiness-labsss/orderflow:v2.3.0
+infrastructure: kubernetes
+namespace_variable: PRODUCTION_NAMESPACE
+kubectl_version_variable: KUBECTL_VERSION
 environment: production
-image_tag: production-build
-secrets:
-  API_KEY: ${API_KEY}
-  DATABASE_PASSWORD: password123
-  TOKEN: abcd1234
-  AWS_SECRET: test-secret
+cluster_credentials_secret: KUBE_CONFIG
+required_kubernetes_secrets: []
