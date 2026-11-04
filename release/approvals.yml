@@ -1,3 +1,14 @@
-approvedBy: 
-reviewDate: 
-releaseManager: 
+
+approval_required: true
+
+environment: production
+
+approval_policy:
+  required_reviewers: 1
+  prevent_self_review: true
+
+approval_status: pending
+
+approvedBy: null
+reviewDate: null
+releaseManager: null

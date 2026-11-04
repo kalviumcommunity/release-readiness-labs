@@ -1,33 +1,75 @@
+
 name: Release Pipeline
 
 on:
   push:
     branches:
       - main
+      - investigation/release-readiness
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: orderflow-release-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
-  deploy-production:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Deploy to Production
-        run: |
-          chmod +x scripts/deploy.sh
-          ./scripts/deploy.sh
-
   validate-release:
+    name: Validate Release
     runs-on: ubuntu-latest
-    needs: deploy-production
+    timeout-minutes: 10
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Run Tests
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install --prefix app
+
+      - name: Run application tests
+        run: npm test --prefix app
+
+      - name: Validate release version
         run: |
-          echo "Running validation tests..."
-          npm install --prefix app
-          npm test --prefix app
-          echo "Validation complete - some tests failed because deployment config has errors"
-          exit 1
+          node -e "
+            const release = require('./release/release.json');
+            if (release.Version !== '2.3.0') {
+              throw new Error('Expected release version 2.3.0');
+            }
+            console.log('Validated release version:', release.Version);
+          "
+
+      - name: Validate deployment files
+        run: |
+          test -f deployment/kubernetes/deployment.yaml
+          test -f deployment/kubernetes/service.yaml
+          test -f release/approvals.yml
+          test -f release/deployment-config.yml
+          test -f release/rollback.yml
+          echo "All required release files exist."
+
+  deploy-production:
+    name: Production Release Gate
+    runs-on: ubuntu-latest
+    needs: validate-release
+    if: github.ref == 'refs/heads/main'
+
+    environment:
+      name: production
+
+    timeout-minutes: 10
+
+    steps:
+      - name: Verify release readiness
+        run: |
+          echo "Release validation successful."
+          echo "Production environment gate reached."
+          echo "Release candidate: 2.3.0"
+          echo "No production deployment performed."

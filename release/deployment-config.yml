@@ -1,7 +1,19 @@
+
 environment: production
-image_tag: production-build
+
+release:
+  version: "2.3.0"
+  image_tag: "2.3.0"
+
+deployment:
+  provider: kubernetes
+  namespace: production
+  manifest: deployment/kubernetes/deployment.yaml
+  replicas: 3
+
 secrets:
-  API_KEY: ${API_KEY}
-  DATABASE_PASSWORD: password123
-  TOKEN: abcd1234
-  AWS_SECRET: test-secret
+  kubernetes_secret_name: orderflow-production-secrets
+  required_keys:
+    - API_KEY
+    - DATABASE_PASSWORD
+    - TOKEN

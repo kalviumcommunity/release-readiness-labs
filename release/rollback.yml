@@ -1,2 +1,21 @@
-rollback_strategy: 
-target_version: 
+
+rollback_strategy: kubernetes_rolling_rollback
+
+target_version: previous_stable_release
+
+trigger_conditions:
+  - health_check_failure
+  - application_startup_failure
+  - elevated_error_rate
+  - failed_release_validation
+
+procedure:
+  - stop_progressive_release
+  - identify_previous_stable_version
+  - execute_kubernetes_rollout_undo
+  - verify_application_health
+  - notify_release_manager
+
+verification:
+  health_check_required: true
+  deployment_status_required: true

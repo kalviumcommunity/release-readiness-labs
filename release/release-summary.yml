@@ -1,5 +1,12 @@
-status: unknown
+
+status: ready_for_review
 environment: production
-version: latest
+version: "2.3.0"
 approval: pending
-rollback: none
+rollback: configured
+deployment_strategy: rolling
+infrastructure: kubernetes
+validation:
+  tests: pending
+  version_check: pending
+  manifest_check: pending
