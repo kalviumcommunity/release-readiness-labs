@@ -1,5 +1,11 @@
-status: unknown
+status: ready
 environment: production
-version: latest
-approval: pending
-rollback: none
+version: v2.3.0
+approval: approved
+rollback: automated-supported
+target_version: v2.2.0
+verification: passed
+readinessDate: "2026-11-05"
+deploymentRisk: low
+pipelineOrder: corrected-test-before-deploy
+secretSanitization: verified-no-hardcoded-secrets

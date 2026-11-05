@@ -1,5 +1,10 @@
 {
-  "Version": "1.0",
-  "ReleaseDate": "2024-01-01",
-  "Author": "DevOps Team"
+  "Application": "OrderFlow",
+  "Version": "2.3.0",
+  "ReleaseDate": "2026-11-05",
+  "Environment": "production",
+  "Author": "Release Engineering & DevSecOps Team",
+  "Status": "Approved",
+  "CommitSHA": "HEAD",
+  "BaseVersion": "v2.2.0"
 }

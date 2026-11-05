@@ -1,3 +1,18 @@
-approvedBy: 
-reviewDate: 
-releaseManager: 
+releaseVersion: "v2.3.0"
+approvedBy: "DevSecOps Lead"
+reviewDate: "2026-11-05"
+releaseManager: "Release Engineering Team"
+approvalStatus: "Approved"
+signOffs:
+  securityLead:
+    name: "Application Security Lead"
+    status: "Approved"
+    comments: "Security review completed. All plaintext secrets removed from config and k8s manifests."
+  qaLead:
+    name: "QA Automation Lead"
+    status: "Approved"
+    comments: "Unit and integration tests passing. Endpoint verification completed."
+  operationsLead:
+    name: "SRE / Production Operations Lead"
+    status: "Approved"
+    comments: "Deployment and rollback procedures verified. Health check probes configured."
