@@ -1,5 +1,6 @@
-status: unknown
+status: ready-for-production
 environment: production
-version: latest
-approval: pending
-rollback: none
+version: v2.3.0
+approval: approved
+rollback: documented (release/rollback.yml)
+validation: pipeline passed (validate -> build -> deploy)

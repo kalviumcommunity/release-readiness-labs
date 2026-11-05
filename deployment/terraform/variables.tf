@@ -1,4 +1,9 @@
-variable "aws_secret_key" {
+variable "aws_region" {
   type    = string
-  default = "test-secret"
+  default = "us-east-1"
+}
+
+variable "app_version" {
+  type    = string
+  default = "v2.3.0"
 }

@@ -1,2 +1,2 @@
-rollback_strategy: 
-target_version: 
+rollback_strategy: "Redeploy previous known-good immutable image via scripts/rollback.sh (kubectl rollout undo). Trigger: failed /health check or elevated errors after deploy. Target time: under 15 minutes."
+target_version: v2.2.0

@@ -1,5 +1,7 @@
 {
-  "Version": "1.0",
-  "ReleaseDate": "2024-01-01",
-  "Author": "DevOps Team"
+  "Version": "v2.3.0",
+  "ReleaseDate": "2026-11-05",
+  "GitTag": "v2.3.0",
+  "ImageTag": "orderflow:v2.3.0-<short-commit-sha>",
+  "Author": "<YOUR NAME>, Release Engineer"
 }

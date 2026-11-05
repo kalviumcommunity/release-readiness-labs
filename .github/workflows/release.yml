@@ -4,30 +4,85 @@ on:
   push:
     branches:
       - main
+      - investigation/release-readiness
+    tags:
+      - "v*"
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  APP_VERSION: v2.3.0
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
-  deploy-production:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Deploy to Production
-        run: |
-          chmod +x scripts/deploy.sh
-          ./scripts/deploy.sh
-
+  
   validate-release:
     runs-on: ubuntu-latest
-    needs: deploy-production
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Run Tests
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run tests
         run: |
-          echo "Running validation tests..."
           npm install --prefix app
           npm test --prefix app
-          echo "Validation complete - some tests failed because deployment config has errors"
-          exit 1
+
+      - name: Block hardcoded secrets
+        run: |
+          if grep -rnE "password123|test-api-key-1234|abcd1234|test-secret" . \
+              --exclude-dir=.git --exclude-dir=.github --exclude-dir=node_modules; then
+            echo "::error::Hardcoded secret found. Use GitHub Secrets / Kubernetes Secrets."
+            exit 1
+          fi
+
+      - name: Block mutable version tags
+        run: |
+          if grep -rnE "(version|image_tag): *(latest|production-build)|:latest|:production-build" release deployment docker-compose.yml; then
+            echo "::error::Mutable tag found. Every artifact must use an immutable version tag."
+            exit 1
+          fi
+
+  
+  build:
+    runs-on: ubuntu-latest
+    needs: validate-release
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build versioned image
+        run: |
+          IMAGE_TAG="${APP_VERSION}-${GITHUB_SHA::7}"
+          docker build -t "orderflow:${IMAGE_TAG}" .
+          echo "Built orderflow:${IMAGE_TAG}"
+
+  
+  deploy-production:
+    runs-on: ubuntu-latest
+    needs: [validate-release, build]
+    environment: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Production
+        env:
+          VERSION: ${{ env.APP_VERSION }}
+          API_KEY: ${{ secrets.API_KEY }}
+          DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+        run: |
+          chmod +x scripts/deploy.sh
+          ./scripts/deploy.sh "$VERSION"
