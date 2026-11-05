@@ -1,2 +1,22 @@
-rollback_strategy: 
-target_version: 
+rollback_strategy: "Automated Kubernetes Deployment Rollout Undo / Image Tag Reversion"
+target_version: "v2.2.0"
+execution_method: "kubectl rollout undo deployment/lab-app"
+automated: true
+timeout_seconds: 300
+trigger_conditions:
+  - condition: "Health check failure on /health"
+    threshold: "3 consecutive failed probes (30 seconds)"
+  - condition: "HTTP 5xx server error rate"
+    threshold: "> 1% of total traffic over 5-minute rolling window"
+  - condition: "P99 latency degradation"
+    threshold: "> 500ms over 5-minute window"
+  - condition: "Pod crash looping or OOMKilled"
+    threshold: "Any pod entering CrashLoopBackOff"
+verification_steps:
+  - "Verify lab-app pods revert to target image v2.2.0"
+  - "Check HTTP 200 response on /health"
+  - "Verify zero pending CrashLoopBackOff pods"
+recovery_considerations:
+  - "No destructive database schema migrations occurred between v2.2.0 and v2.3.0"
+  - "Backward-compatible configuration parameters maintained"
+  - "Production traffic remains uninterrupted via zero-downtime rolling update"
