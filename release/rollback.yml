@@ -1,2 +1,8 @@
-rollback_strategy: 
-target_version: 
+rollback_strategy: automatic
+target_version: v2.2.0
+rollback_trigger: health-check failure or error rate > 5%
+rollback_steps:
+  - stop current deployment
+  - revert to previous stable version v2.2.0
+  - verify health endpoint responds with status ok
+  - notify release manager

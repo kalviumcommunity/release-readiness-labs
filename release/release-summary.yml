@@ -1,5 +1,7 @@
-status: unknown
+status: approved
 environment: production
-version: latest
-approval: pending
-rollback: none
+version: v2.3.0
+approval: approved
+rollback: rollback to v2.2.0 if deployment fails
+deploymentStrategy: rolling-update
+infrastructure: kubernetes-cluster

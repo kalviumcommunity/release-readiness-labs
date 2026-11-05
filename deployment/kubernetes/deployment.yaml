@@ -1,24 +1,36 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: lab-app
+  name: orderflow-app
 spec:
   replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
   selector:
     matchLabels:
-      app: lab-app
+      app: orderflow-app
   template:
     metadata:
       labels:
-        app: lab-app
+        app: orderflow-app
+        version: v2.3.0
     spec:
       containers:
-      - name: lab-app
-        image: lab-app:production-build
+      - name: orderflow-app
+        image: orderflow-app:v2.3.0
         ports:
         - containerPort: 3000
         env:
         - name: API_KEY
-          value: "test-api-key-1234"
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: API_KEY
         - name: DATABASE_PASSWORD
-          value: "password123"
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: DATABASE_PASSWORD

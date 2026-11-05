@@ -1,7 +1,13 @@
 environment: production
-image_tag: production-build
+service_name: orderflow
+release_version: v2.3.0
+image_name: orderflow
+image_tag: v2.3.0
+deployment_strategy: rolling-update
+replica_count: 3
+infrastructure: kubernetes-cluster
 secrets:
   API_KEY: ${API_KEY}
-  DATABASE_PASSWORD: password123
-  TOKEN: abcd1234
-  AWS_SECRET: test-secret
+  DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+  TOKEN: ${APP_TOKEN}
+  AWS_SECRET: ${AWS_SECRET_KEY}
