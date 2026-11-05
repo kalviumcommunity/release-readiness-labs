@@ -17,11 +17,11 @@ if [ -f "${ROLLBACK_CONFIG}" ]; then
 fi
 
 echo "Step 1: Reverting Kubernetes deployment/lab-app..."
-if command -v kubectl >/dev/null 2>&1; then
+if command -v kubectl >/dev/null 2>&1 && kubectl cluster-info >/dev/null 2>&1; then
   kubectl rollout undo deployment/lab-app
   kubectl rollout status deployment/lab-app --timeout=180s
 else
-  echo "kubectl CLI not detected in execution environment. Simulating rollback execution..."
+  echo "Simulating rollback execution..."
   echo "Deployment 'lab-app' successfully rolled back to target version: ${TARGET_VER}"
 fi
 

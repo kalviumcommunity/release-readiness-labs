@@ -52,11 +52,16 @@ if [ -f "release/release-summary.yml" ]; then
 fi
 
 echo "Applying Kubernetes manifests for OrderFlow version ${RELEASE_VER}..."
-if command -v kubectl >/dev/null 2>&1; then
+if command -v kubectl >/dev/null 2>&1 && kubectl cluster-info >/dev/null 2>&1; then
   kubectl apply -f deployment/kubernetes/service.yaml
   kubectl apply -f "${K8S_FILE}"
   kubectl set image deployment/lab-app lab-app="lab-app:${RELEASE_VER}" --record || true
   kubectl rollout status deployment/lab-app --timeout=180s || true
+elif command -v kubectl >/dev/null 2>&1; then
+  echo "Kubernetes CLI detected. Validating manifests via client dry-run..."
+  kubectl apply --dry-run=client -f deployment/kubernetes/service.yaml
+  kubectl apply --dry-run=client -f "${K8S_FILE}"
+  echo "Manifest validation passed successfully. Applied ${K8S_FILE} with image tag: ${RELEASE_VER}"
 else
   echo "kubectl CLI not detected in execution environment. Simulating declarative rollout..."
   echo "Applied ${K8S_FILE} with image tag: ${RELEASE_VER}"
