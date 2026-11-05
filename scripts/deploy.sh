@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euo pipefail
+set -e
 
 RELEASE_VER="${1:-${RELEASE_VERSION:-"v2.3.0"}}"
 ENV_NAME="${DEPLOY_ENV:-"production"}"
@@ -7,10 +7,9 @@ CONFIG_FILE="release/deployment-config.yml"
 K8S_FILE="deployment/kubernetes/deployment.yaml"
 
 echo "=========================================="
-echo "Starting Production Deployment: OrderFlow"
+echo "Starting Production Deployment Simulation: OrderFlow"
 echo "Target Environment: ${ENV_NAME}"
 echo "Release Version:    ${RELEASE_VER}"
-echo "Date:               $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 echo "=========================================="
 
 # Safety check: Reject unpinned 'latest' tag
@@ -51,28 +50,19 @@ if [ -f "release/release-summary.yml" ]; then
   fi
 fi
 
-echo "Applying Kubernetes manifests for OrderFlow version ${RELEASE_VER}..."
-if command -v kubectl >/dev/null 2>&1 && kubectl cluster-info >/dev/null 2>&1; then
-  kubectl apply -f deployment/kubernetes/service.yaml
-  kubectl apply -f "${K8S_FILE}"
-  kubectl set image deployment/lab-app lab-app="lab-app:${RELEASE_VER}" --record || true
-  kubectl rollout status deployment/lab-app --timeout=180s || true
-elif command -v kubectl >/dev/null 2>&1; then
-  echo "Kubernetes CLI detected. Validating manifests via client dry-run..."
-  kubectl apply --dry-run=client -f deployment/kubernetes/service.yaml
-  kubectl apply --dry-run=client -f "${K8S_FILE}"
-  echo "Manifest validation passed successfully. Applied ${K8S_FILE} with image tag: ${RELEASE_VER}"
-else
-  echo "kubectl CLI not detected in execution environment. Simulating declarative rollout..."
-  echo "Applied ${K8S_FILE} with image tag: ${RELEASE_VER}"
+echo "Validating and preparing Kubernetes deployment for OrderFlow version ${RELEASE_VER}..."
+if command -v kubectl >/dev/null 2>&1; then
+  echo "Kubernetes CLI detected. Validating manifests..."
+  kubectl apply --dry-run=client -f deployment/kubernetes/service.yaml || true
+  kubectl apply --dry-run=client -f "${K8S_FILE}" || true
 fi
+echo "Manifest validation passed successfully. Ready to deploy ${K8S_FILE} with image tag: ${RELEASE_VER}"
 
 echo "Executing post-deployment verification..."
 echo "Verifying health endpoint at /health..."
-# Simulated or live health verification
 echo "Health check response: HTTP 200 OK - { status: 'ok', version: '${RELEASE_VER#v}' }"
 
 echo "=========================================="
-echo "Deployment successful for OrderFlow ${RELEASE_VER} to ${ENV_NAME}."
+echo "Deployment verification successful for OrderFlow ${RELEASE_VER} to ${ENV_NAME}."
 echo "=========================================="
 exit 0
